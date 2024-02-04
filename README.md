@@ -1,1 +1,1 @@
-# Compulsory-2-Math
+# Compulsory 2 for math
