@@ -29,7 +29,19 @@ struct Point {
 	float x, y, z;
 
 };
+void CreateCoordinateSystem(std::vector<Vertex>& vertices) {
+	// X-axis
+	vertices.push_back({ -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f });
+	vertices.push_back({ 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f });
 
+	// Y-axis
+	vertices.push_back({ 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f });
+	vertices.push_back({ 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f });
+
+	// Z-axis
+	vertices.push_back({ 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f });
+	vertices.push_back({ 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
+}
 void writeToFile(const char* fileName, double x, double y, double z, double r, double g, double b) {
 	std::ofstream outputFile(fileName, std::ios::app);  // Open the file in append mode
 	if (outputFile.is_open()) {
@@ -196,7 +208,10 @@ int main()
 	
 	const char* outputFileGraphTwoVar = "grahTwoVardata.txt";
 	
+
+
 	glViewport(0, 0, width, height);
+
 	std::vector<Vertex> verticesGraph;
 	//Readfile("grahTwoVardata.txt", verticesGraph);
 	float a = 0.1f;  // Adjust these parameters accordingly
@@ -231,10 +246,16 @@ int main()
 	
 	//FunctionWithTwoVariables(verticesGraph, iterations, outputFileGraphTwoVar);
 	CreateGraphFromFunction(verticesGraph, c, iterations, outputFileGraphTwoVar, start);
+	//CreateCoordinateSystem(coordinateSystemVertices);
 	// Generates Shader object using shaders defualt.vert and default.frag
 	Shader shaderProgram("default.vert", "default.frag");
+	
+	
+	
 
 
+	// Flatten the vector of Vertex into GLfloat
+	
 
 	// Generates Vertex Array Object and binds it
 	VAO VAO1;
@@ -248,6 +269,10 @@ int main()
 		flattenedVertices.push_back(vertex.g);
 		flattenedVertices.push_back(vertex.b);
 	}
+	
+
+	// Unbind to prevent accidentally modifying it
+	
 
 	
 	
@@ -267,6 +292,7 @@ int main()
 	
 	
 	// Unbind all to prevent accidentally modifying them
+	
 	VAO1.Unbind();
 	VBO_Spiral.Unbind();
 	VAO2.Unbind();
@@ -292,7 +318,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram.Activate();
-
+		
 		camera.Inputs(window);
 		camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
 
@@ -309,6 +335,12 @@ int main()
 		glPointSize(25.0f);  // Set point size here
 		glDrawArrays(GL_POINTS, 0, points.size());
 		VAO2.Unbind();
+		//
+
+		
+
+		// Unbind VAO to prevent accidentally modifying it
+		
 		
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -327,6 +359,7 @@ int main()
 	VBO_Spiral.Delete();
 	
 	shaderProgram.Delete();
+	
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
 	// Terminate GLFW before ending the program
