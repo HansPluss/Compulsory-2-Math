@@ -20,10 +20,110 @@ const unsigned int width = 800;
 const unsigned int height = 800;
 using namespace std;
 struct Vertex {
-    float x, y, z;
-    float r, g, b;
+	float x, y, z;
+	float r, g, b;
 	float pr, pg, pb;
 };
+class Cube {
+public:
+	vector<Vertex> mVertecies;
+	glm::mat4 matrix;
+	std::string name;
+
+	Cube(float scale) : a(scale) {
+		Vertex v0{ -a, -a, a , 1.0f, 0.0f, 0.0f };
+		Vertex v1{ a, -a, a , 0.0f, 1.0f, 0.0f };
+		Vertex v2{ a, a, a , 0.0f, 0.0f, 1.0f };
+		Vertex v3{ -a, a, a , 0.0f, 1.0f, 0.0f };
+		Vertex v4{ -a, -a, -a , 1.0f, 1.0f, 0.0f };
+		Vertex v5{ a, -a, -a , 0.0f, 1.0f, 0.0f };
+		Vertex v6{ a, a, -a , 0.0f, 1.0f, 1.0f };
+		Vertex v7{ -a, a, -a , 0.0f, 1.0f, 0.0f };
+
+
+		// Front face
+
+		mVertecies.push_back(v0);
+		mVertecies.push_back(v1);
+		mVertecies.push_back(v3);
+		mVertecies.push_back(v3);
+		mVertecies.push_back(v1);
+		mVertecies.push_back(v2);
+
+
+
+		// Back face
+		mVertecies.push_back(v4);
+		mVertecies.push_back(v5);
+		mVertecies.push_back(v7);
+		mVertecies.push_back(v7);
+		mVertecies.push_back(v5);
+		mVertecies.push_back(v6);
+
+		// Right face
+		mVertecies.push_back(v1);
+		mVertecies.push_back(v5);
+		mVertecies.push_back(v2);
+		mVertecies.push_back(v2);
+		mVertecies.push_back(v5);
+		mVertecies.push_back(v6);
+
+		// Left face
+		mVertecies.push_back(v4);
+		mVertecies.push_back(v0);
+		mVertecies.push_back(v7);
+		mVertecies.push_back(v7);
+		mVertecies.push_back(v0);
+		mVertecies.push_back(v3);
+
+		// Top face
+		mVertecies.push_back(v3);
+		mVertecies.push_back(v2);
+		mVertecies.push_back(v7);
+		mVertecies.push_back(v7);
+		mVertecies.push_back(v2);
+		mVertecies.push_back(v6);
+
+		// Bottom face
+		mVertecies.push_back(v4);
+		mVertecies.push_back(v5);
+		mVertecies.push_back(v0);
+		mVertecies.push_back(v0);
+		mVertecies.push_back(v5);
+		mVertecies.push_back(v1);
+
+		
+		
+		flattenVertices();
+	}
+	std::vector<GLfloat> getFlattenedVertices() const {
+		std::vector<GLfloat> flattenedVertices;
+		for (const Vertex& vertex : mVertecies) {
+			flattenedVertices.push_back(vertex.x);
+			flattenedVertices.push_back(vertex.y);
+			flattenedVertices.push_back(vertex.z);
+			flattenedVertices.push_back(vertex.r);
+			flattenedVertices.push_back(vertex.g);
+			flattenedVertices.push_back(vertex.b);
+		}
+		return flattenedVertices;
+	}
+
+private:
+	void flattenVertices() {
+		std::vector<GLfloat> flattenedVertices;
+		for (const Vertex& vertex : mVertecies) {
+			flattenedVertices.push_back(vertex.x);
+			flattenedVertices.push_back(vertex.y);
+			flattenedVertices.push_back(vertex.z);
+			flattenedVertices.push_back(vertex.r);
+			flattenedVertices.push_back(vertex.g);
+			flattenedVertices.push_back(vertex.b);
+		}
+	}
+	float a{ 1.0f };
+};
+
 
 struct Point {
 	float x, y, z;
@@ -89,24 +189,59 @@ void Readfile(const char* fileName, std::vector<Vertex>& verticesSpiral) {
 	
 	
 }
+glm::vec4 CubicHermiteFunction(float inx0, float inx1, float iny0,float iny1, float derivativeY0, float derivativeY1) {
+	float x0, x1, y0, y1;
+	x0 = inx0;
+	x1 = inx1;
+	y0 = iny0;
+	y1 = iny1;
+
+	float derY0, derY1;
+	derY0 = derivativeY0;
+	derY1 = derivativeY1;
+
+	float func = powf(1, 1);
+	glm::mat<4, 4, float> A
+	    (powf(x0, 3), powf(x0, 2), x0, 1,
+		powf(x1, 3), powf(x1, 2), x1, 1,
+		powf(x0, 2), x0, 1, 0,
+		powf(x0, 2), x0, 1, 1);
+	
+	glm::vec4 y(y0, y1,derivativeY0,derivativeY1);
+
+	glm::mat4 inverseA = glm::inverse(A);
+
+	glm::vec4 x = y * inverseA;
+	return x;
+}
 glm::vec3 LeastSquareMethod() {
-
-	glm::mat3x4 A(4, 1, 1, 0,   // First column
-		         -2, -1, 5, 0,  // Second column
-		          1, 1, 1, 0);
-	glm::vec4 y(2, 5, 9,1);
-
+#define G 5
+	glm::mat3x3 ATA(279, -5, -1,   // First column
+		-5, 368, 48,  // Second column
+		-1, 48, 8);
+	              
+	
+	
+	
+	
 	//compute A^T
-	glm::mat3 ATA = glm::transpose(A) * A;
-
+	
+ // amount of points
 
 	//compute A^T * y
-	glm::vec3 ATy = glm::transpose(A) * y;
+	glm::vec3 ATy(-5,368,48);
 
 	//compute B^-1 or (A * A^T)^-1
 	glm::mat3 ATAInverse = glm::inverse(ATA);
 
+	
 	glm::vec3 x = ATAInverse * ATy;
+	/*std::cout << "ATy: " << ATy.x << ", " << ATy.y << ", " << ATy.z << std::endl;
+    std::cout << "ATAInverse: " << ATAInverse[0][0] << ", " << ATAInverse[0][1] << ", " << ATAInverse[0][2] << std::endl;
+    std::cout << "            " << ATAInverse[1][0] << ", " << ATAInverse[1][1] << ", " << ATAInverse[1][2] << std::endl;
+    std::cout << "            " << ATAInverse[2][0] << ", " << ATAInverse[2][1] << ", " << ATAInverse[2][2] << std::endl;*/
+
+    // compute x
 	
 	std::cout << " x: " << x.x << " y: " << x.y << " z: " << x.z << std::endl;
 	return x;
@@ -209,7 +344,7 @@ int main()
 	const char* outputFileGraphTwoVar = "grahTwoVardata.txt";
 	
 
-
+	
 	glViewport(0, 0, width, height);
 
 	std::vector<Vertex> verticesGraph;
@@ -218,16 +353,23 @@ int main()
 	float b = 0.1f;
 	float c = 0.1f;
 	float angularFrequency = 5.1f;
-	int iterations = 50;
-	int start = -50;
+	int iterations = 200;
+	int start = -200;
 
 	const int numRows = 3;
 	const int numCols = 4;
 
-	glm::mat<3, 4, float> A(4, 2, 1, 0,   // First column
-		-2, -1, 1, 0,  // Second column
-		1, 1, 1, 0
-	    );  // Third column
+	glm::mat<3, 4, float> A(-2, 2, 1,   
+		-5, 4, 1,  
+		-7, 7, 1,
+		-8, 11, 1
+	    );  
+
+	glm::mat<3, 4, float> B(4, 2, 1,
+		-2, -1, 1,
+		1, 1, 1,
+		0, 0, 0
+	);
 
 	std::vector<glm::vec3> points;
 	for (int i = 0; i < numCols; ++i) {
@@ -241,8 +383,9 @@ int main()
 		flattenedPoints.push_back(point.z);
 		// Add color components if needed
 	}
-
 	
+	
+
 	
 	//FunctionWithTwoVariables(verticesGraph, iterations, outputFileGraphTwoVar);
 	CreateGraphFromFunction(verticesGraph, c, iterations, outputFileGraphTwoVar, start);
@@ -252,7 +395,7 @@ int main()
 	
 	
 	
-
+	
 
 	// Flatten the vector of Vertex into GLfloat
 	
@@ -278,7 +421,7 @@ int main()
 	
 
 	// Generates Vertex Buffer Object and links it to spiral vertices
-	VBO VBO_Spiral(flattenedVertices.data(), verticesGraph.size() * sizeof(Vertex));
+	VBO VBO_Spiral(flattenedVertices.data(), flattenedVertices.size() * sizeof(GLfloat));
 	VAO1.LinkAttrib(VBO_Spiral, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
 	VAO1.LinkAttrib(VBO_Spiral, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
@@ -308,6 +451,7 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	
+
 	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -330,11 +474,13 @@ int main()
 		glLineWidth(5.0f);
 		VAO1.Unbind();
 
+		
+
 		// Draw the points
-		VAO2.Bind();
-		glPointSize(25.0f);  // Set point size here
-		glDrawArrays(GL_POINTS, 0, points.size());
-		VAO2.Unbind();
+		//VAO2.Bind();
+		//glPointSize(25.0f);  // Set point size here
+		//glDrawArrays(GL_POINTS, 0, points.size());
+		//VAO2.Unbind();
 		//
 
 		
