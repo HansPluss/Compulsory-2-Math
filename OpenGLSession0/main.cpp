@@ -24,123 +24,66 @@ struct Vertex {
 	float r, g, b;
 	float pr, pg, pb;
 };
-class Cube {
-public:
-	vector<Vertex> mVertecies;
-	glm::mat4 matrix;
-	std::string name;
 
-	Cube(float scale) : a(scale) {
-		Vertex v0{ -a, -a, a , 1.0f, 0.0f, 0.0f };
-		Vertex v1{ a, -a, a , 0.0f, 1.0f, 0.0f };
-		Vertex v2{ a, a, a , 0.0f, 0.0f, 1.0f };
-		Vertex v3{ -a, a, a , 0.0f, 1.0f, 0.0f };
-		Vertex v4{ -a, -a, -a , 1.0f, 1.0f, 0.0f };
-		Vertex v5{ a, -a, -a , 0.0f, 1.0f, 0.0f };
-		Vertex v6{ a, a, -a , 0.0f, 1.0f, 1.0f };
-		Vertex v7{ -a, a, -a , 0.0f, 1.0f, 0.0f };
-
-
-		// Front face
-
-		mVertecies.push_back(v0);
-		mVertecies.push_back(v1);
-		mVertecies.push_back(v3);
-		mVertecies.push_back(v3);
-		mVertecies.push_back(v1);
-		mVertecies.push_back(v2);
-
-
-
-		// Back face
-		mVertecies.push_back(v4);
-		mVertecies.push_back(v5);
-		mVertecies.push_back(v7);
-		mVertecies.push_back(v7);
-		mVertecies.push_back(v5);
-		mVertecies.push_back(v6);
-
-		// Right face
-		mVertecies.push_back(v1);
-		mVertecies.push_back(v5);
-		mVertecies.push_back(v2);
-		mVertecies.push_back(v2);
-		mVertecies.push_back(v5);
-		mVertecies.push_back(v6);
-
-		// Left face
-		mVertecies.push_back(v4);
-		mVertecies.push_back(v0);
-		mVertecies.push_back(v7);
-		mVertecies.push_back(v7);
-		mVertecies.push_back(v0);
-		mVertecies.push_back(v3);
-
-		// Top face
-		mVertecies.push_back(v3);
-		mVertecies.push_back(v2);
-		mVertecies.push_back(v7);
-		mVertecies.push_back(v7);
-		mVertecies.push_back(v2);
-		mVertecies.push_back(v6);
-
-		// Bottom face
-		mVertecies.push_back(v4);
-		mVertecies.push_back(v5);
-		mVertecies.push_back(v0);
-		mVertecies.push_back(v0);
-		mVertecies.push_back(v5);
-		mVertecies.push_back(v1);
-
-		
-		
-		flattenVertices();
-	}
-	std::vector<GLfloat> getFlattenedVertices() const {
-		std::vector<GLfloat> flattenedVertices;
-		for (const Vertex& vertex : mVertecies) {
-			flattenedVertices.push_back(vertex.x);
-			flattenedVertices.push_back(vertex.y);
-			flattenedVertices.push_back(vertex.z);
-			flattenedVertices.push_back(vertex.r);
-			flattenedVertices.push_back(vertex.g);
-			flattenedVertices.push_back(vertex.b);
-		}
-		return flattenedVertices;
-	}
-
-private:
-	void flattenVertices() {
-		std::vector<GLfloat> flattenedVertices;
-		for (const Vertex& vertex : mVertecies) {
-			flattenedVertices.push_back(vertex.x);
-			flattenedVertices.push_back(vertex.y);
-			flattenedVertices.push_back(vertex.z);
-			flattenedVertices.push_back(vertex.r);
-			flattenedVertices.push_back(vertex.g);
-			flattenedVertices.push_back(vertex.b);
-		}
-	}
-	float a{ 1.0f };
-};
 
 
 struct Point {
 	float x, y, z;
-
+	float r, g, b;
 };
-void CreateCoordinateSystem(std::vector<Vertex>& vertices) {
+void CreateCoordinateSystem(std::vector<Vertex>& vertices,float start, float iterations) {
 	// X-axis
-	vertices.push_back({ -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f });
-	vertices.push_back({ 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f });
+	for (int i = start; i < iterations; ++i) {
+		float n = 0.05f;
+		float x = i * n;
+		float y = 0.0;
+		float z = 0.0f;
+		Vertex vertex;
+		vertex.x = x;
+		vertex.y = y;
+		vertex.z = z;
+		vertex.r = 1.0f;
+		vertex.g = 0.0f;
+		vertex.b = 0.0f;  // Adjust for coloring effect
+		vertices.push_back(vertex);
+
+		
+	}
 
 	// Y-axis
-	vertices.push_back({ 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f });
-	vertices.push_back({ 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f });
+	for (int i = start; i < iterations; ++i) {
+		float n = 0.05f;
+		float x = 0.0;
+		float y = i * n;
+		float z = 0.0f;
+		Vertex vertex;
+		vertex.x = x;
+		vertex.y = y;
+		vertex.z = z;
+		vertex.r = 0.0f;
+		vertex.g = 1.0f;
+		vertex.b = 0.0f;  // Adjust for coloring effect
+		vertices.push_back(vertex);
 
-	// Z-axis
-	vertices.push_back({ 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f });
-	vertices.push_back({ 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
+		
+	}
+	// Z - Axis
+	for (int i = start; i < iterations; ++i) {
+		float n = 0.05f;
+		float x = 0.0;
+		float y = 0.0f;
+		float z = i * n;
+		Vertex vertex;
+		vertex.x = x;
+		vertex.y = y;
+		vertex.z = z;
+		vertex.r = 0.0f;
+		vertex.g = 0.0f;
+		vertex.b = 1.0f;  // Adjust for coloring effect
+		vertices.push_back(vertex);
+
+
+	}
 }
 void writeToFile(const char* fileName, double x, double y, double z, double r, double g, double b) {
 	std::ofstream outputFile(fileName, std::ios::app);  // Open the file in append mode
@@ -211,51 +154,45 @@ glm::vec4 CubicHermiteFunction(float inx0, float inx1, float iny0,float iny1, fl
 
 	glm::mat4 inverseA = glm::inverse(A);
 
-	glm::vec4 x = y * inverseA;
+	glm::vec4 x =  inverseA * y;
 	return x;
 }
 glm::vec3 LeastSquareMethod() {
-#define G 5
-	glm::mat3x3 ATA(279, -5, -1,   // First column
-		-5, 368, 48,  // Second column
-		-1, 48, 8);
-	              
-	
-	
-	
-	
-	//compute A^T
-	
- // amount of points
 
+	glm::mat3x3 ATA(271, 3, 3,   
+		-5, 268, 48,  
+		-1, 48, 8);
+	
 	//compute A^T * y
-	glm::vec3 ATy(-5,368,48);
+	glm::vec3 ATy(-5,368,48); // default -5,368,48
 
 	//compute B^-1 or (A * A^T)^-1
 	glm::mat3 ATAInverse = glm::inverse(ATA);
 
-	
+	// compute x
 	glm::vec3 x = ATAInverse * ATy;
 	/*std::cout << "ATy: " << ATy.x << ", " << ATy.y << ", " << ATy.z << std::endl;
     std::cout << "ATAInverse: " << ATAInverse[0][0] << ", " << ATAInverse[0][1] << ", " << ATAInverse[0][2] << std::endl;
     std::cout << "            " << ATAInverse[1][0] << ", " << ATAInverse[1][1] << ", " << ATAInverse[1][2] << std::endl;
     std::cout << "            " << ATAInverse[2][0] << ", " << ATAInverse[2][1] << ", " << ATAInverse[2][2] << std::endl;*/
 
-    // compute x
+    
 	
 	std::cout << " x: " << x.x << " y: " << x.y << " z: " << x.z << std::endl;
 	return x;
 
 }
 void CreateGraphFromFunction(std::vector<Vertex>& verticesgraph,float c , int iterations, const char* filename, int start) {
-	for (int i = start; i <= iterations; ++i) {
+	glm::vec3 leastSquare = LeastSquareMethod();
+	for (int i = start; i < iterations; ++i) {
 		float t = static_cast<float>(i);
 		float n = 0.05f;
 		float x = i * n;
-		float y = LeastSquareMethod().x * x * x + LeastSquareMethod().y * x + LeastSquareMethod().z;
+		float y = ((leastSquare.x * 100) * x * x) + (leastSquare.y) *  x + 1 * leastSquare.z / 100;
+
 		float z = 0.0f;
 	
-		float df = 2*x;
+		float df = x;
 		
 
 		Vertex vertex;
@@ -276,11 +213,12 @@ void CreateGraphFromFunction(std::vector<Vertex>& verticesgraph,float c , int it
 		vertex.pg = 0.0f;
 		vertex.pb = 1.0f;*/
 		verticesgraph.push_back(vertex);
-		writeToFile(filename, vertex.x, vertex.y, vertex.z,vertex.r, vertex.g, vertex.b);
+		//writeToFile(filename, vertex.x, vertex.y, vertex.z,vertex.r, vertex.g, vertex.b);
 
 	}
 
 	
+
 
 }
 void FunctionWithTwoVariables(std::vector<Vertex>& verticesgraph, int iterations, const char* filename) {
@@ -348,48 +286,61 @@ int main()
 	glViewport(0, 0, width, height);
 
 	std::vector<Vertex> verticesGraph;
+	std::vector<Vertex> verticesCoordinate;
 	//Readfile("grahTwoVardata.txt", verticesGraph);
 	float a = 0.1f;  // Adjust these parameters accordingly
 	float b = 0.1f;
 	float c = 0.1f;
 	float angularFrequency = 5.1f;
-	int iterations = 200;
-	int start = -200;
+	int iterations = 1200;
+	int start = -1200;
 
 	const int numRows = 3;
 	const int numCols = 4;
-
-	glm::mat<3, 4, float> A(-2, 2, 1,   
-		-5, 4, 1,  
-		-7, 7, 1,
-		-8, 11, 1
-	    );  
-
-	glm::mat<3, 4, float> B(4, 2, 1,
-		-2, -1, 1,
-		1, 1, 1,
-		0, 0, 0
+	//draw the first 4 points
+	glm::mat<3, 4, float> A(
+		-2, -5, -7, -8,   // X
+		2, 4, 7, 11,   // Y
+		0, 0, 0, 0    // Z
 	);
 
-	std::vector<glm::vec3> points;
+	glm::mat<3, 4, float> B(
+		2, 4, 6, 9,  // X
+		2, 5, 7, 10, // Y
+		0, 0, 0, 0  // Z
+		
+	);
+
+	std::vector<Point> points;
 	for (int i = 0; i < numCols; ++i) {
-		glm::vec3 point = glm::vec3(A[0][i], A[1][i], A[2][i]);
-		points.push_back(point);
+		Point vert;
+		vert.x = (A[0][i]);
+		vert.y = A[1][i];
+		vert.z = A[2][i];
+
+		points.push_back(vert);
 	}
-	std::vector<GLfloat> flattenedPoints;
-	for (const glm::vec3& point : points) {
-		flattenedPoints.push_back(point.x);
-		flattenedPoints.push_back(point.y);
-		flattenedPoints.push_back(point.z);
-		// Add color components if needed
+
+	for (int i = 0; i < numCols; ++i) {
+		Point vert;
+		vert.x = (B[0][i]);
+		vert.y = B[1][i];
+		vert.z = B[2][i];
+		
+		cout << " x = " << (B[0][i]) << endl;
+		cout << " y = " << B[1][i] << endl;
+		cout << " z = " << B[2][i] << endl;
+		points.push_back(vert);
 	}
+	
+	
 	
 	
 
 	
 	//FunctionWithTwoVariables(verticesGraph, iterations, outputFileGraphTwoVar);
 	CreateGraphFromFunction(verticesGraph, c, iterations, outputFileGraphTwoVar, start);
-	//CreateCoordinateSystem(coordinateSystemVertices);
+	CreateCoordinateSystem(verticesCoordinate,start,iterations);
 	// Generates Shader object using shaders defualt.vert and default.frag
 	Shader shaderProgram("default.vert", "default.frag");
 	
@@ -414,34 +365,56 @@ int main()
 	}
 	
 
-	// Unbind to prevent accidentally modifying it
-	
-
 	
 	
 
-	// Generates Vertex Buffer Object and links it to spiral vertices
+	
+	
+
+	// Generates Vertex Buffer Object and links it to graph vertices
 	VBO VBO_Spiral(flattenedVertices.data(), flattenedVertices.size() * sizeof(GLfloat));
 	VAO1.LinkAttrib(VBO_Spiral, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
 	VAO1.LinkAttrib(VBO_Spiral, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
 	VAO VAO2;
+	std::vector<GLfloat> flattenedPoints;
+	for (const Point& point : points) {
+		flattenedPoints.push_back(point.x);
+		flattenedPoints.push_back(point.y);
+		flattenedPoints.push_back(point.z);
+		flattenedPoints.push_back(point.r);
+		flattenedPoints.push_back(point.g);
+		flattenedPoints.push_back(point.b);
+		// Add color components 
+	}
 	VAO2.Bind();
-	VBO VBO_Point(flattenedPoints.data(), flattenedPoints.size() * sizeof(glm::vec3));
+	VBO VBO_Point(flattenedPoints.data(), flattenedPoints.size() * sizeof(GLfloat));
 	VAO2.LinkAttrib(VBO_Point, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
 	VAO2.LinkAttrib(VBO_Point, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	
-	
-	
-	
+	VAO VAO3;
+	VAO3.Bind();
+	std::vector<GLfloat> CoordinatePoints;
+	for (const Vertex& vertex : verticesCoordinate) {
+		CoordinatePoints.push_back(vertex.x);
+		CoordinatePoints.push_back(vertex.y);
+		CoordinatePoints.push_back(vertex.z);
+		CoordinatePoints.push_back(vertex.r);
+		CoordinatePoints.push_back(vertex.g);
+		CoordinatePoints.push_back(vertex.b);
+	}
+	VBO VBO_CoordinateSys(CoordinatePoints.data(), CoordinatePoints.size() * sizeof(GLfloat));
+	VAO3.LinkAttrib(VBO_CoordinateSys, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+	VAO3.LinkAttrib(VBO_CoordinateSys, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	// Unbind all to prevent accidentally modifying them
 	
 	VAO1.Unbind();
 	VBO_Spiral.Unbind();
 	VAO2.Unbind();
 	VBO_Point.Unbind();
+	VAO3.Unbind();
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
-	float scaleValue = 100.0f;
+	float scaleValue = 25.0f;
 	
 	// Variables that help the rotation of the pyramid
 	float rotation = 0.0f;
@@ -464,24 +437,32 @@ int main()
 		shaderProgram.Activate();
 		
 		camera.Inputs(window);
-		camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
-
-
+		camera.Matrix(45.0f, 0.1f, 500.0f, shaderProgram, "camMatrix");
+		// Draw the points
 		glUniform1f(uniID, scaleValue);
-		 //Bind the VAO so OpenGL knows to use it
+
 		VAO1.Bind();
 		glDrawArrays(GL_LINE_STRIP, 0, verticesGraph.size());
 		glLineWidth(5.0f);
 		VAO1.Unbind();
 
+
+		VAO2.Bind();         
+		glDrawArrays(GL_POINTS, 0, points.size());
+		glPointSize(25.0f);// Set point size here
+		VAO2.Unbind();
+
+		VAO3.Bind();
+		glDrawArrays(GL_LINES, 0, verticesCoordinate.size());
+		glLineWidth(5.0f);
+		VAO3.Unbind();
+		 //Bind the VAO so OpenGL knows to use it
 		
 
-		// Draw the points
-		//VAO2.Bind();
-		//glPointSize(25.0f);  // Set point size here
-		//glDrawArrays(GL_POINTS, 0, points.size());
-		//VAO2.Unbind();
-		//
+		
+
+		
+		
 
 		
 
@@ -501,8 +482,10 @@ int main()
 	// Delete all the objects we've created
 	VAO1.Delete();
 	VAO2.Delete();
+	VAO3.Delete();
 	VBO_Point.Delete();
 	VBO_Spiral.Delete();
+	VBO_CoordinateSys.Delete();
 	
 	shaderProgram.Delete();
 	
