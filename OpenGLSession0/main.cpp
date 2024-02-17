@@ -160,8 +160,8 @@ glm::vec4 CubicHermiteFunction(float inx0, float inx1, float iny0,float iny1, fl
 glm::vec3 LeastSquareMethod() {
 
 	glm::mat3x3 ATA(271, 3, 3,   
-		-5, 268, 48,  
-		-1, 48, 8);
+		          -5, 268, 48,  
+		           -1, 48, 8);
 	
 	//compute A^T * y
 	glm::vec3 ATy(-5,368,48); // default -5,368,48
@@ -171,16 +171,25 @@ glm::vec3 LeastSquareMethod() {
 
 	// compute x
 	glm::vec3 x = ATAInverse * ATy;
-	/*std::cout << "ATy: " << ATy.x << ", " << ATy.y << ", " << ATy.z << std::endl;
-    std::cout << "ATAInverse: " << ATAInverse[0][0] << ", " << ATAInverse[0][1] << ", " << ATAInverse[0][2] << std::endl;
-    std::cout << "            " << ATAInverse[1][0] << ", " << ATAInverse[1][1] << ", " << ATAInverse[1][2] << std::endl;
-    std::cout << "            " << ATAInverse[2][0] << ", " << ATAInverse[2][1] << ", " << ATAInverse[2][2] << std::endl;*/
-
-    
 	
 	std::cout << " x: " << x.x << " y: " << x.y << " z: " << x.z << std::endl;
 	return x;
 
+}
+glm::vec4 CubicInterpolation(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {
+	glm::mat<4, 4, float> A(
+		powf(x0, 3), powf(x0, 2), x0, 1,
+		powf(x1, 3), powf(x1, 2), x1, 1,
+		powf(x2, 3), powf(x2, 2), x2, 1,
+		powf(x3, 3), powf(x3, 2), x3, 1
+	);
+
+	glm::vec4 y(y0, y1, y2, y3);
+
+	glm::mat4 inverseA = glm::inverse(A);
+
+	glm::vec4 coefficients = inverseA * y;
+	return coefficients;
 }
 void CreateGraphFromFunction(std::vector<Vertex>& verticesgraph,float c , int iterations, const char* filename, int start) {
 	glm::vec3 leastSquare = LeastSquareMethod();
@@ -218,6 +227,45 @@ void CreateGraphFromFunction(std::vector<Vertex>& verticesgraph,float c , int it
 	}
 
 	
+
+
+}
+void CreateGraphFromPoints(std::vector<Vertex>& verticesgraph, float c, int iterations, const char* filename, int start) {
+	glm::vec4 CubicHermiteFunc = CubicHermiteFunction(0, 0, 0, 0, 0, 0);
+	for (int i = start; i < iterations; ++i) {
+		float t = static_cast<float>(i);
+		float n = 0.05f;
+		float x = i * n;
+		float y = ((CubicHermiteFunc.x * 100) * x * x * x) + (CubicHermiteFunc.y) * x * x + 1 * CubicHermiteFunc.z * x + CubicHermiteFunc.w;
+
+		float z = 0.0f;
+
+		float df = x;
+
+
+		Vertex vertex;
+		vertex.x = x;
+		vertex.y = y;
+		vertex.z = z;
+		if (df < 0) {
+			vertex.r = 1.0f;
+			vertex.g = 0.0f;
+		}
+		else {
+			vertex.r = 0.0f;
+			vertex.g = 1.0f;
+		}
+
+		vertex.b = std::abs(z) / (c * iterations);  // Adjust for coloring effect
+		/*vertex.pr = 0.0f;
+		vertex.pg = 0.0f;
+		vertex.pb = 1.0f;*/
+		verticesgraph.push_back(vertex);
+		//writeToFile(filename, vertex.x, vertex.y, vertex.z,vertex.r, vertex.g, vertex.b);
+
+	}
+
+
 
 
 }
