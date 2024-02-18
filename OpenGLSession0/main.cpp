@@ -96,15 +96,6 @@ void writeToFile(const char* fileName, double x, double y, double z, double r, d
 	else {
 		std::cerr << "Unable to open the output file for writing." << std::endl;
 	}
-	//if (y > 0) {
-	//	outputFile << " green";  // Use green for positive y
-	//}
-	//else if (y < 0) {
-	//	outputFile << " red";    // Use red for negative y
-	//}
-	//else {
-	//	outputFile << " white";  // Use white for y = 0
-	//}
 	outputFile << std::endl;
 	outputFile.close();
 }
@@ -188,8 +179,8 @@ glm::vec4 CubicInterpolation(float x0, float y0, float x1, float y1, float x2, f
 
 	glm::mat4 inverseA = glm::inverse(A);
 
-	glm::vec4 coefficients = inverseA * y;
-	return coefficients;
+	glm::vec4 x = inverseA * y;
+	return x;
 }
 void CreateGraphFromFunction(std::vector<Vertex>& verticesgraph,float c , int iterations, const char* filename, int start) {
 	glm::vec3 leastSquare = LeastSquareMethod();
@@ -231,12 +222,12 @@ void CreateGraphFromFunction(std::vector<Vertex>& verticesgraph,float c , int it
 
 }
 void CreateGraphFromPoints(std::vector<Vertex>& verticesgraph, float c, int iterations, const char* filename, int start) {
-	glm::vec4 CubicHermiteFunc = CubicHermiteFunction(0, 0, 0, 0, 0, 0);
+	glm::vec4 CubicFunc = CubicInterpolation(-2,-3,1,-1,3,3,4,8);
 	for (int i = start; i < iterations; ++i) {
 		float t = static_cast<float>(i);
 		float n = 0.05f;
 		float x = i * n;
-		float y = ((CubicHermiteFunc.x * 100) * x * x * x) + (CubicHermiteFunc.y) * x * x + 1 * CubicHermiteFunc.z * x + CubicHermiteFunc.w;
+		float y = ((CubicFunc.x * 100) * x * x * x) + (CubicFunc.y) * x * x + 1 * CubicFunc.z * x + CubicFunc.w;
 
 		float z = 0.0f;
 
@@ -327,8 +318,8 @@ int main()
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
 	
 	
-	const char* outputFileGraphTwoVar = "grahTwoVardata.txt";
-	
+	const char* outputFileLeastSquareData = "LeastSqureVardata.txt";
+	const char* outputFileCubicData = "CubicVardata.txt";
 
 	
 	glViewport(0, 0, width, height);
@@ -386,8 +377,8 @@ int main()
 	
 
 	
-	//FunctionWithTwoVariables(verticesGraph, iterations, outputFileGraphTwoVar);
-	CreateGraphFromFunction(verticesGraph, c, iterations, outputFileGraphTwoVar, start);
+	CreateGraphFromPoints(verticesGraph, c, iterations, outputFileLeastSquareData, start);
+	CreateGraphFromFunction(verticesGraph, c, 8, outputFileCubicData,-2);
 	CreateCoordinateSystem(verticesCoordinate,start,iterations);
 	// Generates Shader object using shaders defualt.vert and default.frag
 	Shader shaderProgram("default.vert", "default.frag");
@@ -524,7 +515,8 @@ int main()
 	}
 
 	
-	
+	/*std::ofstream clearFile(outputFileCubicData);
+		clearFile.close();*/
 	
 	
 	// Delete all the objects we've created
