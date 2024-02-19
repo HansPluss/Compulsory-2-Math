@@ -188,7 +188,7 @@ void CreateGraphFromFunction(std::vector<Vertex>& verticesgraph,float c , int it
 		float t = static_cast<float>(i);
 		float n = 0.05f;
 		float x = i * n;
-		float y = ((leastSquare.x * 100) * x * x) + (leastSquare.y) *  x + 1 * leastSquare.z / 100;
+		float y = ((leastSquare.x * 100) * x * x) + (leastSquare.y) *  x + 1 * leastSquare.z / 100;	
 
 		float z = 0.0f;
 	
@@ -301,7 +301,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create a GLFWwindow object of 800 by 800 pixels, naming it "OpenGL"
-	GLFWwindow* window = glfwCreateWindow(width, height, "OpenGLProject", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(width, height, "Compulsory 2 math", NULL, NULL);
 	// Error check if the window fails to create
 	if (window == NULL)
 	{
@@ -356,7 +356,7 @@ int main()
 		vert.x = (A[0][i]);
 		vert.y = A[1][i];
 		vert.z = A[2][i];
-
+		vert.b = 1.0f;
 		points.push_back(vert);
 	}
 
@@ -365,7 +365,7 @@ int main()
 		vert.x = (B[0][i]);
 		vert.y = B[1][i];
 		vert.z = B[2][i];
-		
+		vert.b = 1.0f;
 		cout << " x = " << (B[0][i]) << endl;
 		cout << " y = " << B[1][i] << endl;
 		cout << " z = " << B[2][i] << endl;
@@ -377,8 +377,8 @@ int main()
 	
 
 	
-	CreateGraphFromPoints(verticesGraph, c, iterations, outputFileLeastSquareData, start);
-	CreateGraphFromFunction(verticesGraph, c, 8, outputFileCubicData,-2);
+	//CreateGraphFromPoints(verticesGraph, c, 8, outputFileLeastSquareData, -2);
+	CreateGraphFromFunction(verticesGraph, c, iterations, outputFileCubicData,start);
 	CreateCoordinateSystem(verticesCoordinate,start,iterations);
 	// Generates Shader object using shaders defualt.vert and default.frag
 	Shader shaderProgram("default.vert", "default.frag");
