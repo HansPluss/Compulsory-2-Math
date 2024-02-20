@@ -150,40 +150,43 @@ glm::vec4 CubicHermiteFunction(float inx0, float inx1, float iny0,float iny1, fl
 }
 glm::vec3 LeastSquareMethod() {
 
-	glm::mat3x3 ATA(271, 3, 3,   
-		          -5, 268, 48,  
+	glm::mat<3,3, double> ATA(271, 3, 3,    // should be 271
+		          -5, 268, 48,              // 3
 		           -1, 48, 8);
 	
 	//compute A^T * y
-	glm::vec3 ATy(-5,368,48); // default -5,368,48
+	glm::vec<3,double> ATy(-5,368,48); // default -5,368,48
 
 	//compute B^-1 or (A * A^T)^-1
-	glm::mat3 ATAInverse = glm::inverse(ATA);
+	glm::mat<3,3,double> ATAInverse = glm::inverse(ATA);
 
 	// compute x
-	glm::vec3 x = ATAInverse * ATy;
+	glm::vec<3,double> x = ATAInverse * ATy;
 	
 	std::cout << " x: " << x.x << " y: " << x.y << " z: " << x.z << std::endl;
 	return x;
 
 }
 glm::vec4 CubicInterpolation(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {
-	glm::mat<4, 4, float> A(
-		powf(x0, 3), powf(x0, 2), x0, 1,
-		powf(x1, 3), powf(x1, 2), x1, 1,
-		powf(x2, 3), powf(x2, 2), x2, 1,
-		powf(x3, 3), powf(x3, 2), x3, 1
+	glm::mat<4, 4, double> A(
+		powf(x0, 3), powf(x1, 3), powf(x2, 3), powf(x3,3),
+		powf(x0, 2), powf(x1, 2), powf(x2, 2), powf(x3,2),
+		powf(x0, 1), powf(x1, 1), powf(x2,1), powf(x3,1),
+		1,            1,          1       , 1
 	);
 
-	glm::vec4 y(y0, y1, y2, y3);
+	glm::vec<4, double> y(y0, y1, y2, y3);
 
-	glm::mat4 inverseA = glm::inverse(A);
+	glm::mat<4, 4, double>inverseA = glm::inverse(A);
 
-	glm::vec4 x = inverseA * y;
+	glm::vec<4,double> x = inverseA * y;
+	cout << x.x << " " << x.y << " " << x.z << " " << x.w << " " << endl;
 	return x;
 }
 void CreateGraphFromFunction(std::vector<Vertex>& verticesgraph,float c , int iterations, const char* filename, int start) {
 	glm::vec3 leastSquare = LeastSquareMethod();
+	std::ofstream clearFile(filename);
+		clearFile.close();
 	for (int i = start; i < iterations; ++i) {
 		float t = static_cast<float>(i);
 		float n = 0.05f;
@@ -213,7 +216,7 @@ void CreateGraphFromFunction(std::vector<Vertex>& verticesgraph,float c , int it
 		vertex.pg = 0.0f;
 		vertex.pb = 1.0f;*/
 		verticesgraph.push_back(vertex);
-		//writeToFile(filename, vertex.x, vertex.y, vertex.z,vertex.r, vertex.g, vertex.b);
+		writeToFile(filename, vertex.x, vertex.y, vertex.z,vertex.r, vertex.g, vertex.b);
 
 	}
 
@@ -223,11 +226,13 @@ void CreateGraphFromFunction(std::vector<Vertex>& verticesgraph,float c , int it
 }
 void CreateGraphFromPoints(std::vector<Vertex>& verticesgraph, float c, int iterations, const char* filename, int start) {
 	glm::vec4 CubicFunc = CubicInterpolation(-2,-3,1,-1,3,3,4,8);
-	for (int i = start; i < iterations; ++i) {
+	std::ofstream clearFile(filename);
+	clearFile.close();
+	for (int i = start; i <= iterations; ++i) {
 		float t = static_cast<float>(i);
-		float n = 0.05f;
+		float n = 1.0f;
 		float x = i * n;
-		float y = ((CubicFunc.x * 100) * x * x * x) + (CubicFunc.y) * x * x + 1 * CubicFunc.z * x + CubicFunc.w;
+		float y = ((CubicFunc.x) * x * x * x) + (CubicFunc.y) * x * x + 1 * CubicFunc.z * x + CubicFunc.w;
 
 		float z = 0.0f;
 
@@ -252,7 +257,7 @@ void CreateGraphFromPoints(std::vector<Vertex>& verticesgraph, float c, int iter
 		vertex.pg = 0.0f;
 		vertex.pb = 1.0f;*/
 		verticesgraph.push_back(vertex);
-		//writeToFile(filename, vertex.x, vertex.y, vertex.z,vertex.r, vertex.g, vertex.b);
+		writeToFile(filename, vertex.x, vertex.y, vertex.z,vertex.r, vertex.g, vertex.b);
 
 	}
 
@@ -349,7 +354,13 @@ int main()
 		0, 0, 0, 0  // Z
 		
 	);
+	glm::mat<4, 4, float> C(
+		-2, 1, 3, 4,  // X
+		-3, -1, 3, 8, // Y
+		0, 0, 0, 0,  // Z
+		0, 0, 0, 0
 
+	);
 	std::vector<Point> points;
 	for (int i = 0; i < numCols; ++i) {
 		Point vert;
@@ -373,12 +384,20 @@ int main()
 	}
 	
 	
-	
+	for (int i = 0; i < numCols; ++i) {
+		Point vert;
+		vert.x = (C[0][i]);
+		vert.y = C[1][i];
+		vert.z = C[2][i];
+		vert.g = 1.0f;
+		vert.b = 0.0f;
+		points.push_back(vert);
+	}
 	
 
 	
-	//CreateGraphFromPoints(verticesGraph, c, 8, outputFileLeastSquareData, -2);
-	CreateGraphFromFunction(verticesGraph, c, iterations, outputFileCubicData,start);
+	CreateGraphFromPoints(verticesGraph, c, 4, outputFileLeastSquareData, -2);
+	//CreateGraphFromFunction(verticesGraph, c, iterations, outputFileLeastSquareData,start);
 	CreateCoordinateSystem(verticesCoordinate,start,iterations);
 	// Generates Shader object using shaders defualt.vert and default.frag
 	Shader shaderProgram("default.vert", "default.frag");
